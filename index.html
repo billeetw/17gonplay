@@ -1,124 +1,191 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>亂世烤題｜理性樂觀測試</title>
-<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root{--accent:#ffb347;--bg:#35281d;--text:#fff;--btn:#a3ffae;--right:#54ff7f;--wrong:#ff6464;}
-  *{box-sizing:border-box;margin:0;padding:0;}
-  body{
-    font-family:'Noto Sans TC',sans-serif;
-    background:radial-gradient(circle at 30% 30%,#ffefd5 0%,#fcb69f 35%,#d18552 65%,var(--bg) 100%),
-               repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 12px,transparent 12px 24px);
-    color:var(--text);display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:1.5rem;
-  }
-  h1{
-    font-family:'Press Start 2P',monospace;font-size:2rem;letter-spacing:2px;margin-bottom:1rem;text-align:center;
-    background:linear-gradient(90deg,var(--accent)0%,var(--btn)100%);
-    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-  }
-  #quiz{width:100%;max-width:520px;background:#5c4634dd;padding:1.5rem 1.8rem;border-radius:10px;
-        box-shadow:0 0 12px rgba(0,0,0,.5);backdrop-filter:blur(2px);}
-  #q{font-size:1.3rem;line-height:1.6;text-align:center;margin-bottom:1.5rem;}
-  .choice{display:block;width:100%;margin:.9rem 0;background:var(--btn);color:#000;
-          border:none;border-radius:6px;padding:1rem;font-size:1.15rem;cursor:pointer;transition:.2s;}
-  .choice:hover{opacity:.9;transform:translateY(-2px);}
-  #feedback{font-size:1.1rem;text-align:center;margin-top:.8rem;min-height:1.8rem;}
-  #next,#cta{
-    margin-top:1.3rem;background:var(--accent);color:#000;font-weight:700;
-    border:none;border-radius:6px;padding:1rem;font-size:1.15rem;cursor:pointer;width:100%;display:none;
-  }
-  #cta{background:var(--btn);}
-  #result{font-size:1.4rem;text-align:center;margin-top:1.2rem;display:none;}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>亂世烤題｜理性樂觀測試</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet" />
+
+  <style>
+    :root{
+      --accent:#ffb347; --bg:#35281d; --text:#fff; --btn:#a3ffae;
+      --right:#54ff7f;  --wrong:#ff6464;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{
+      font-family:'Noto Sans TC',sans-serif;
+      background:radial-gradient(circle at 30% 30%,#ffefd5 0%,#fcb69f 35%,#d18552 65%,var(--bg) 100%),
+                 repeating-linear-gradient(45deg,rgba(255,255,255,.05) 0 12px,transparent 12px 24px);
+      color:var(--text);
+      display:flex;flex-direction:column;align-items:center;min-height:100vh;padding:1.5rem;
+    }
+    h1{
+      font-family:'Press Start 2P',monospace;
+      font-size:2rem;letter-spacing:2px;margin-bottom:1rem;text-align:center;
+      background:linear-gradient(90deg,var(--accent) 0%,var(--btn) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    #quiz{
+      width:100%;max-width:520px;
+      background:#5c4634dd;padding:1.5rem 1.8rem;border-radius:10px;
+      box-shadow:0 0 12px rgba(0,0,0,.5);backdrop-filter:blur(2px);
+    }
+    #q{font-size:1.3rem;line-height:1.6;text-align:center;margin-bottom:1.5rem;}
+    .choice{
+      display:block;width:100%;margin:.9rem 0;
+      background:var(--btn);color:#000;border:none;border-radius:6px;
+      padding:1rem;font-size:1.15rem;cursor:pointer;transition:.2s;
+    }
+    .choice:hover{opacity:.9;transform:translateY(-2px);}
+    #feedback{font-size:1.1rem;text-align:center;margin-top:.8rem;min-height:1.8rem;}
+    #next,#cta{
+      margin-top:1.3rem;background:var(--accent);color:#000;font-weight:700;
+      border:none;border-radius:6px;padding:1rem;font-size:1.15rem;cursor:pointer;
+      width:100%;display:none;
+    }
+    #cta{background:var(--btn);}
+    #result{font-size:1.4rem;text-align:center;margin-top:1.2rem;display:none;}
+  </style>
 </head>
+
 <body>
-<h1>亂世烤題</h1>
-<div id="quiz">
-  <div id="q">載入中...</div>
-  <div id="choices"></div>
-  <div id="feedback"></div>
-  <button id="next">下一題 ▶</button>
-  <div id="result"></div>
-  <button id="cta">🌱 分享你的善舉截圖 #李伯彥</button>
-</div>
+  <h1>亂世烤題</h1>
+  <div id="quiz">
+    <div id="q">載入中...</div>
+    <div id="choices"></div>
+    <div id="feedback"></div>
+    <button id="next">下一題 ▶</button>
+    <div id="result"></div>
+    <button id="cta">🌱 分享你的善舉截圖 #李伯彥</button>
+  </div>
 
-<script>
-const data = [
-  { q: '母親輕聲說『這輩子足夠了』，此刻你最應該做的是什麼？',
-    c: ['安靜地陪伴她回顧美好的過往', '趕緊說『別這麼想』', '馬上尋找治療的方法'],
-    a: 0,
-    tip: '陪伴有時比挽留更溫柔，人生若有圓滿，便是此刻的寧靜。' },
+  <script>
+  /* -------- 題庫 -------- */
+  const data = [
+    { q:'母親輕聲說「這輩子足夠了」，此刻你最應該做的是什麼？',
+      c:['安靜地陪伴她回顧美好的過往','趕緊說「別這麼想」','馬上尋找治療的方法'],
+      a:0, tip:'陪伴有時比挽留更溫柔，人生若有圓滿，便是此刻的寧靜。' },
 
-  { q: '長輩面對生命盡頭，真正渴望的是什麼？',
-    c: ['無痛的平靜與尊重', '更多昂貴的醫療設備', '更多的大道理與勸解'],
-    a: 0,
-    tip: '尊嚴和安寧，也許才是生命最後的真正禮物。' },
+    { q:'長輩面對生命盡頭，真正渴望的是什麼？',
+      c:['無痛的平靜與尊重','更多昂貴的醫療設備','更多的大道理與勸解'],
+      a:0, tip:'尊嚴和安寧，也許才是生命最後的真正禮物。' },
 
-  { q: '當摯愛離去，最好的紀念方式是？',
-    c: ['把他的善與愛傳遞下去', '每天自責', '將過去的一切深鎖房門'],
-    a: 0,
-    tip: '真正的思念，是把對他的愛，變成照亮未來的燈。' },
+    { q:'當摯愛離去，最好的紀念方式是？',
+      c:['把他的善與愛傳遞下去','每天自責','將過去的一切深鎖房門'],
+      a:0, tip:'真正的思念，是把對他的愛，變成照亮未來的燈。' },
 
-  { q: '孩子第一次通宵趕報告，你最適合的反應是？',
-    c: ['默默準備一杯咖啡陪伴他', '直接替他完成', '展開人生大道理的說教'],
-    a: 0,
-    tip: '陪伴不是替代，而是在他累時給予溫暖的鼓勵。' },
+    { q:'孩子第一次通宵趕報告，你最適合的反應是？',
+      c:['默默準備一杯咖啡陪伴他','直接替他完成','展開人生大道理的說教'],
+      a:0, tip:'陪伴不是替代，而是在他累時給予溫暖的鼓勵。' },
 
-  { q: '面對孩子的叛逆期，最好的態度是？',
-    c: ['耐心傾聽，理解背後的需求', '嚴格提醒規矩', '將他與別人家的孩子比較'],
-    a: 0,
-    tip: '理解是陪伴成長的陽光，照亮內心的黑暗與疑惑。' },
+    { q:'面對孩子的叛逆期，最好的態度是？',
+      c:['耐心傾聽，理解背後的需求','嚴格提醒規矩','將他與別人家的孩子比較'],
+      a:0, tip:'理解是陪伴成長的陽光，照亮內心的黑暗與疑惑。' },
 
-  { q: '孩子決定休學一年，你的反應應該是？',
-    c: ['冷靜陪伴，幫他分析現實狀況', '憤怒表示反對', '諷刺他過於天真'],
-    a: 0,
-    tip: '讓他有探索世界的勇氣，你給予的應該是安心的港灣。' },
+    { q:'孩子決定休學一年，你的反應應該是？',
+      c:['冷靜陪伴，幫他分析現實狀況','憤怒表示反對','諷刺他過於天真'],
+      a:0, tip:'讓他有探索世界的勇氣，你給予的應該是安心的港灣。' },
 
-  { q: '股市大跌，生命中最寶貴的資產是？',
-    c: ['你擁有的時間與心靈的平靜', '尚未實現的損益', '每天追逐的謠言與消息'],
-    a: 0,
-    tip: '真正的富足，不在市場而在你生命裡的每個當下。' },
+    { q:'股市大跌，生命中最寶貴的資產是？',
+      c:['你擁有的時間與心靈的平靜','尚未實現的損益','每天追逐的謠言與消息'],
+      a:0, tip:'真正的富足，不在市場而在你生命裡的每個當下。' },
 
-  { q: '人生前半場最值得投資的是什麼？',
-    c: ['拓展視野與豐富生命體驗', '名牌物質', '快速致富的投資'],
-    a: 0,
-    tip: '真正值得花費的，是那些拓展靈魂的旅程。' },
+    { q:'人生前半場最值得投資的是什麼？',
+      c:['拓展視野與豐富生命體驗','名牌物質','快速致富的投資'],
+      a:0, tip:'真正值得花費的，是那些拓展靈魂的旅程。' },
 
-  { q: '真正提高幸福感的方法是？',
-    c: ['經營人際關係與健康的身心', '無盡的加班', '不斷查看帳戶數字'],
-    a: 0,
-    tip: '快樂如同資產，也需要耐心地經營與呵護。' },
+    { q:'真正提高幸福感的方法是？',
+      c:['經營人際關係與健康的身心','無盡的加班','不斷查看帳戶數字'],
+      a:0, tip:'快樂如同資產，也需要耐心地經營與呵護。' },
 
-  { q: '如何最有效地啟動規律運動？',
-    c: ['從每天輕鬆的步行開始', '一次性報名多年健身課程', '等待朋友的邀約'],
-    a: 0,
-    tip: '一步一腳印，持續才是健康的真正秘訣。' },
+    { q:'如何最有效地啟動規律運動？',
+      c:['從每天輕鬆的步行開始','一次性報名多年健身課程','等待朋友的邀約'],
+      a:0, tip:'一步一腳印，持續才是健康的真正秘訣。' },
 
-  { q: '說『忙到沒時間運動』背後真正的原因是？',
-    c: ['尚未調整生活的優先順序', '日子太短，世界太忙', '健身房距離太遠了'],
-    a: 0,
-    tip: '重新排列生命的優先順序，便會有時間守護健康。' },
+    { q:'說「忙到沒時間運動」背後真正的原因是？',
+      c:['尚未調整生活的優先順序','日子太短，世界太忙','健身房距離太遠了'],
+      a:0, tip:'重新排列生命的優先順序，便會有時間守護健康。' },
 
-  { q: '提醒自己站起來動一動，最有效的話語？',
-    c: ['『站起來，血液也想旅行！』', '『年老再來考慮』', '『算了吧』'],
-    a: 0,
-    tip: '健康不必等到未來，身體的幸福就是當下的覺察。' },
+    { q:'提醒自己站起來動一動，最有效的話語？',
+      c:['「站起來，血液也想旅行！」','「年老再來考慮」','「算了吧」'],
+      a:0, tip:'健康不必等到未來，身體的幸福就是當下的覺察。' },
 
-  { q: '如果世界按下暫停鍵，你最想做的是什麼？',
-    c: ['緊緊擁抱身邊最重要的人', '抓緊機會完成工作', '瘋狂刷新社交媒體'],
-    a: 0,
-    tip: '愛與陪伴，才是生命中最真實的存在。' },
+    { q:'如果世界按下暫停鍵，你最想做的是什麼？',
+      c:['緊緊擁抱身邊最重要的人','抓緊機會完成工作','瘋狂刷新社交媒體'],
+      a:0, tip:'愛與陪伴，才是生命中最真實的存在。' },
 
-  { q: '哪一句話最能讓你感到豁達？',
-    c: ['『終將放下一切』', '『我必須超越所有人』', '『賺不到就是失敗』'],
-    a: 0,
-    tip: '放下，不是失去，而是重新看見生命本來的樣子。' },
+    { q:'哪一句話最能讓你豁達？',
+      c:['「終將放下一切」','「我必須超越所有人」','「賺不到就是失敗」'],
+      a:0, tip:'放下，不是失去，而是重新看見生命本來的樣子。' },
 
-  { q: '測驗結束後，你想做的第一件事是？',
-    c: ['打給你想念的人，說一句關心', '繼續無止盡的滑手機', '查看今天的股市收盤'],
-    a: 0,
-    tip: '真正重要的，永遠是此時此刻的情感連結。' }
-];
+    { q:'測驗結束後，你想做的第一件事是？',
+      c:['打給你想念的人，說一句關心','繼續無止盡地滑手機','查看今天的股市收盤'],
+      a:0, tip:'真正重要的，永遠是此刻的情感連結。' }
+  ];
+
+  const deeds = ['給媽媽倒杯水','留言稱讚朋友','睡前伸展 5 分鐘','今天主動說謝謝','把手機放下十分鐘'];
+
+  /* -------- 主程式 -------- */
+  let idx = 0, score = 0;
+  const qEl = document.getElementById('q');
+  const choicesEl = document.getElementById('choices');
+  const feedbackEl = document.getElementById('feedback');
+  const nextBtn = document.getElementById('next');
+  const resultEl = document.getElementById('result');
+  const ctaBtn = document.getElementById('cta');
+
+  function loadQ() {
+    const cur = data[idx];
+    qEl.textContent = cur.q;
+    choicesEl.innerHTML = '';
+    feedbackEl.textContent = '';
+    cur.c.forEach((txt, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'choice';
+      btn.textContent = txt;
+      btn.onclick = () => select(i, btn);
+      choicesEl.appendChild(btn);
+    });
+    nextBtn.style.display = 'none';
+  }
+
+  function select(i, btn) {
+    const cur = data[idx];
+    document.querySelectorAll('.choice').forEach(b => b.disabled = true);
+    if (i === cur.a) {
+      score++;
+      btn.style.background = 'var(--right)';
+      feedbackEl.textContent = '你好棒！ ' + cur.tip;
+    } else {
+      btn.style.background = 'var(--wrong)';
+      feedbackEl.textContent = '可以再想一想，也許… ' + cur.tip;
+    }
+    nextBtn.style.display = 'block';
+  }
+
+  nextBtn.onclick = () => {
+    idx++;
+    idx < data.length ? loadQ() : end();
+  };
+
+  function end() {
+    qEl.style.display = 'none';
+    choicesEl.style.display = 'none';
+    nextBtn.style.display = 'none';
+    feedbackEl.style.display = 'none';
+    const deed = deeds[Math.floor(Math.random() * deeds.length)];
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `你答對 <strong>${score}</strong> / ${data.length} 題！<br>今日善舉：<em>${deed}</em>`;
+    ctaBtn.style.display = 'block';
+  }
+
+  ctaBtn.onclick = () => {
+    alert('截圖分享至 #李伯彥，一起溫暖世界！');
+  };
+
+  window.onload = loadQ;
+  </script>
+</body>
+</html>
